@@ -1,6 +1,6 @@
 ##---------------------------------------------------------------------
 ## Program: roadDistanceFinder.py
-## Version: 2.1
+## Version: 2.2
 ##
 ## Author: Nick Joslyn
 ## Institution: Simpson College
@@ -10,32 +10,23 @@
 ##	partners Emma Christensen and Maddy Kersten.
 ##
 ## Purpose: 
-##	This program is written to extract Google Maps' recommended
-##	route distance between a set of demand nodes and one facility
-##	node. This program reads in a set of voter addresses from an Excel 
-##	file, calculates the distances to one facility node, and writes out 
-##	the distances and times to a specified Excel file. The output Excel 
-##	file will contain two columns of distances. Column A will contain 
-##	the travel distance in meters. Column B will contain the travel 
-##	duration in seconds.
+##	Extract Google Maps' recommended route distance between a set of 
+##	demand nodes and one facility node. This program reads in a set of 
+##	voter addresses from an Excel file, calculates the distances to one 
+##	facility node, and writes out the distances and times to a specified 
+##	Excel file. The output Excel file will contain two columns of distances. 
+##	Column A will contain the travel distance in meters. Column B will 
+##	contain the travel duration in seconds.
 ##
 ## Instructions:
-##	This program is designed as a black box. Everything is generalized
-##	and runs off of user-input. If you desire, you can edit the
-##	code. it is thoroughly commented.
-##
+##	Black box Python script. Generalized and runs on user-input.
+##	If you desire, you can edit the code. It is thoroughly commented.
+##	
 ##	You must have openpyxl and the Google Maps modules installed.
 ##	Additionally, you must have a Google Maps API key. API keys have
 ##	quotas. 2500 requests per day. Only 100 at a time. If you enable
 ##	billing, your quotas increase, and you should increase the apiSingleQuota
 ##	variable accordingly.
-##
-##	This is a Python script. You can run it using your preferred Python
-##	editor -- i.e. IDLE, SUBLIME, VIM, etc.
-##	
-##	For SUBLIME Text, you must have the REPL installed. Otherwise, 
-##	the input arguments will not be processesed. If using SUBLIME, run
-##	using the REPL Python build.
 ##
 ## Notes: 
 ##	If Google cannot find the address, the code is written to put a
