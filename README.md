@@ -1,7 +1,7 @@
 # location-analysis
 Repository of programs developed for location analysis research. The research is conducted through the Math Department at Simpson College.
 
-This repository contains programs developed in R. The GoogleMaps extraction is only developed in Python and is included for completeness.
+This repository contains location analysis heuristic programs developed in R. It is intended for use with the address-information repository. 
 
 Location analysis is a branch of operations research intended to investigate the geographical relationships between facilities and demand populations.
 
