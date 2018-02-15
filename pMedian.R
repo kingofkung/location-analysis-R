@@ -1,5 +1,7 @@
 #Read-In Files
 
+setwd("~/Dropbox/pMed")
+
 DemandNamesReadIn <- read.csv("CityClass_Names_CSV.csv", header = FALSE)
 DemandNames <- as.matrix(DemandNamesReadIn)
 
@@ -44,7 +46,7 @@ for (i in 1:numberOptimized)
 #Extract corresponding columns from the distance matrix
 for (i in 1:numberOptimized)
 {
-  solutionMatrix[,i] <- DistanceMatrix[,optimalLocations[i]] 
+  solutionMatrix[,i] <- DistanceMatrix[,optimalLocations[i]]
 }
 
 #Determine which clinic a city will go to
@@ -71,7 +73,7 @@ while(whileCounter < (numberOptimized*numberOfSupplyNodes))
   demandDistancesTest <- c()
   totalDistanceTest <- 0
   whileCounter <- 0
-  
+
   #Begin vertex substitutions
   for (i in 1:numberOptimized)
   {
@@ -79,37 +81,37 @@ while(whileCounter < (numberOptimized*numberOfSupplyNodes))
     {
       temporaryLocations <- optimalLocations
       temporaryLocations[i] <- SupplyClassNumber[j,3]
-      
+
       #Same steps to calculate totalDistance, this time with temporaryLocations
       for (k in 1:numberOptimized)
       {
-        solutionMatrixTest[,k] <- DistanceMatrix[,temporaryLocations[k]] 
+        solutionMatrixTest[,k] <- DistanceMatrix[,temporaryLocations[k]]
       }
-      
+
       for (m in 1:numberOfDemandNodes)
       {
         closestSupplyLocationTest <- min(solutionMatrixTest[m,])
         demandDistancesTest[m] <- (closestSupplyLocationTest * DemandNumbers[m,1])
       }
-      
+
       for (n in 1:numberOfDemandNodes)
       {
         totalDistanceTest <- totalDistanceTest + demandDistancesTest[n]
       }
-      
+
       #Add to whileCounter if there is no improvement from a substitution
       if (totalDistanceTest >= totalDistance)
       {
         whileCounter <- whileCounter + 1
       }
-      
+
       #If there is improvement, complete the substitution
       if (totalDistanceTest < totalDistance)
       {
         totalDistance <- totalDistanceTest
         optimalLocations[i] <- SupplyClassNumber[j,3]
       }
-      
+
       totalDistanceTest <- 0
       solutionMatrixTest <- matrix(ncol = numberOptimized, nrow = numberOfDemandNodes)
       demandDistancesTest <- c()
