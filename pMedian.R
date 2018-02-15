@@ -1,5 +1,6 @@
-#Read-In Files
+rm(list = ls(all.names = TRUE))
 
+##Read-In Files
 setwd("~/Dropbox/pMed")
 
 DemandNamesReadIn <- read.csv("CityClass_Names_CSV.csv", header = FALSE)
@@ -25,8 +26,8 @@ numberOptimized <- 8
 totalDistance <- 0
 optimalLocations <- c()
 
-numberOfSupplyNodes <- length(SupplyClassNumber[,1])
-numberOfDemandNodes <- length(DemandNumbers[,1])
+numberOfSupplyNodes <- nrow(SupplyClassNumber)
+numberOfDemandNodes <- nrow(DemandNumbers)
 
 #--------------------------------------------------------------
 #Start Timer
@@ -124,8 +125,8 @@ optimalLocations
 outDf <- data.frame("time" = Sys.time(),
                     totalDistance,
                     "optimalLocations" = paste(optimalLocations,
-                        collapse = ", "))
-
+                        collapse = ", "), row.names = F)
+## and write.
 write.csv(outDf, "results.csv")
 
 proc.time()-ptm
