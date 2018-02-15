@@ -120,5 +120,12 @@ while(whileCounter < (numberOptimized*numberOfSupplyNodes))
 }
 totalDistance
 optimalLocations
+## make a 1 row data.frame to append to my output file.
+outDf <- data.frame("time" = Sys.time(),
+                    totalDistance,
+                    "optimalLocations" = paste(optimalLocations,
+                        collapse = ", "))
+
+write.csv(outDf, "results.csv")
 
 proc.time()-ptm
