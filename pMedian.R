@@ -39,10 +39,10 @@ solutionMatrix <- matrix(ncol = numberOptimized, nrow = numberOfDemandNodes)
 demandDistances <- c()
 
 #Choose first p clinics as initial solution
-for (i in 1:numberOptimized)
-{
-  optimalLocations[i] <- SupplyClassNumber[i,3]
-}
+## for (i in 1:numberOptimized)
+## {
+  optimalLocations[1:numberOptimized] <- SupplyClassNumber[1:numberOptimized,3]
+## }
 
 #Extract corresponding columns from the distance matrix
 for (i in 1:numberOptimized)
