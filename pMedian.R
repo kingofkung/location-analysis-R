@@ -1,8 +1,10 @@
 rm(list = ls(all.names = TRUE))
 
 ## Read In Files
-setwd("C:\\Users\\brogers\\Desktop\\SpatialFun\\pMed")
-
+## For PC
+## setwd("C:\\Users\\brogers\\Desktop\\SpatialFun\\pMed")
+## For my mac
+setwd("~/Dropbox/pMed")
 
 DemandNames <- as.matrix(read.csv("CityClass_Names_CSV.csv", header = FALSE))
 
