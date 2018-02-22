@@ -101,7 +101,7 @@ while(whileCounter < (numberOptimized * numberOfSupplyNodes))
     }
 
 }
-## 42457764867
+##42457764867
 totalDistance
 ##  42  449 1188  313  196  250 1046  128
 optimalLocations
