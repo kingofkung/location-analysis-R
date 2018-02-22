@@ -1,30 +1,25 @@
 rm(list = ls(all.names = TRUE))
 
-##Read-In Files
-setwd("~/Dropbox/pMed")
+## Read In Files
+setwd("C:\\Users\\brogers\\Desktop\\SpatialFun\\pMed")
 
-DemandNamesReadIn <- read.csv("CityClass_Names_CSV.csv", header = FALSE)
-DemandNames <- as.matrix(DemandNamesReadIn)
 
-DemandNumbersReadIn <- read.table("DS_CityClass_Numbers_Text.txt")
-DemandNumbers <- as.matrix(DemandNumbersReadIn)
+DemandNames <- as.matrix(read.csv("CityClass_Names_CSV.csv", header = FALSE))
 
-SupplyStringReadIn <- read.csv("AHA_String_Class_CSV.csv", header = FALSE)
-SupplyClassString <- as.matrix(SupplyStringReadIn)
+DemandNumbers <- as.matrix(read.table("DS_CityClass_Numbers_Text.txt"))
 
-SupplyNumberReadIn <- read.table("AHA_Numbers_Class_Text.txt")
-SupplyClassNumber <- as.matrix(SupplyNumberReadIn)
+SupplyClassString <- as.matrix(read.csv("AHA_String_Class_CSV.csv",
+                                        header = FALSE))
 
-DistanceMatrixReadIn <- read.table("FinalDistanceMatrix_Text.txt")
-DistanceMatrix <- as.matrix(DistanceMatrixReadIn)
+SupplyClassNumber <- as.matrix(read.table("AHA_Numbers_Class_Text.txt"))
 
+DistanceMatrix <- as.matrix(read.table("FinalDistanceMatrix_Text.txt"))
 #--------------------------------------------------------------
 #Initialize important parameters
-
 numberOptimized <- 8
 
 totalDistance <- 0
-optimalLocations <- c()
+optimalLocations <- numeric(numberOptimized)
 
 numberOfSupplyNodes <- nrow(SupplyClassNumber)
 numberOfDemandNodes <- nrow(DemandNumbers)
@@ -36,97 +31,80 @@ ptm <- proc.time()
 #Find initial solution
 
 solutionMatrix <- matrix(ncol = numberOptimized, nrow = numberOfDemandNodes)
-demandDistances <- c()
+demandDistances <- numeric(nrow(solutionMatrixTest))
 
-#Choose first p clinics as initial solution
-## for (i in 1:numberOptimized)
-## {
-  optimalLocations[1:numberOptimized] <- SupplyClassNumber[1:numberOptimized,3]
-## }
+## Choose first p clinics as initial solution
+optimalLocations[1:numberOptimized] <- 1:numberOptimized
 
-#Extract corresponding columns from the distance matrix
-for (i in 1:numberOptimized)
-{
-  solutionMatrix[,i] <- DistanceMatrix[,optimalLocations[i]]
-}
+## Extract corresponding columns from the distance matrix
+solutionMatrix[, 1:numberOptimized] <- DistanceMatrix[, optimalLocations]
 
-#Determine which clinic a city will go to
-for (i in 1:numberOfDemandNodes)
-{
-  closestSupplyLocation <- min(solutionMatrix[i,])
-  demandDistances[i] <- (closestSupplyLocation * DemandNumbers[i,1])
-}
+##Determine which clinic a city will go to
+## get the minimum of each row in the solution matrix
+closestSupplyLocation <- apply(solutionMatrix, 1, min)
+## and multiply by the first column of DemandNumbers
+demandDistances <- closestSupplyLocation * DemandNumbers[, 1]
 
 #Calculate the total distance
-for (i in 1:numberOfDemandNodes)
-{
-  totalDistance <- totalDistance + demandDistances[i]
-}
+totalDistance <- sum(demandDistances)
 
 #--------------------------------------------------------------
-#While loop for vertex substitutions until convergence
 
+## develop indexing matrix
+im <- matrix(data = c(
+                     sort(rep(seq_len(numberOptimized), numberOfSupplyNodes)),
+                     rep(seq_len(numberOfSupplyNodes), numberOptimized)),
+             ncol = 2)
+colnames(im) <- c('i', 'j')
+
+## While loop for vertex substitutions until convergence
 whileCounter <- 0
-while(whileCounter < (numberOptimized*numberOfSupplyNodes))
+while(whileCounter < (numberOptimized * numberOfSupplyNodes))
 {
-  #Initialize/re-initialize
+  ## Initialize/re-initialize
   solutionMatrixTest <- matrix(ncol = numberOptimized, nrow = numberOfDemandNodes)
-  demandDistancesTest <- c()
+  demandDistancesTest <- numeric(nrow(solutionMatrixTest))
   totalDistanceTest <- 0
   whileCounter <- 0
 
-  #Begin vertex substitutions
-  for (i in 1:numberOptimized)
-  {
-    for (j in 1:numberOfSupplyNodes)
-    {
-      temporaryLocations <- optimalLocations
-      temporaryLocations[i] <- SupplyClassNumber[j,3]
+  ## Begin vertex substitutions
+    for(k in seq_len(nrow(im))){
+        i <- im[k, 'i']
+        j <- im[k, 'j']
+        ## designate temporary locations
+        temporaryLocations <- optimalLocations
+        temporaryLocations[i] <- SupplyClassNumber[j, 3]
 
-      #Same steps to calculate totalDistance, this time with temporaryLocations
-      for (k in 1:numberOptimized)
-      {
-        solutionMatrixTest[,k] <- DistanceMatrix[,temporaryLocations[k]]
-      }
+        ## Same steps to calculate totalDistance, this time with temporaryLocations
+        solutionMatrixTest[, 1:numberOptimized] <- DistanceMatrix[, temporaryLocations]
 
-      for (m in 1:numberOfDemandNodes)
-      {
-        closestSupplyLocationTest <- min(solutionMatrixTest[m,])
-        demandDistancesTest[m] <- (closestSupplyLocationTest * DemandNumbers[m,1])
-      }
+        closestSupplyLocationTest <- apply(solutionMatrixTest, 1, min)
+        demandDistancesTest <- closestSupplyLocationTest * DemandNumbers[, 1]
 
-      for (n in 1:numberOfDemandNodes)
-      {
-        totalDistanceTest <- totalDistanceTest + demandDistancesTest[n]
-      }
+        totalDistanceTest <- sum(demandDistancesTest)
 
-      #Add to whileCounter if there is no improvement from a substitution
-      if (totalDistanceTest >= totalDistance)
-      {
-        whileCounter <- whileCounter + 1
-      }
+        ## Add to whileCounter if there is no improvement from a substitution
+        if (totalDistanceTest >= totalDistance) whileCounter <- whileCounter + 1
 
-      #If there is improvement, complete the substitution
-      if (totalDistanceTest < totalDistance)
-      {
-        totalDistance <- totalDistanceTest
-        optimalLocations[i] <- SupplyClassNumber[j,3]
-      }
+        ## If there is improvement, complete the substitution
+        if (totalDistanceTest < totalDistance)
+        {
+            totalDistance <- totalDistanceTest
+            optimalLocations[i] <- SupplyClassNumber[j, 3]
+        }
 
-      totalDistanceTest <- 0
-      solutionMatrixTest <- matrix(ncol = numberOptimized, nrow = numberOfDemandNodes)
-      demandDistancesTest <- c()
+        totalDistanceTest <- 0
+        solutionMatrixTest <- matrix(ncol = numberOptimized, nrow = numberOfDemandNodes)
+        demandDistancesTest <- numeric(nrow(solutionMatrixTest))
     }
-  }
-}
-totalDistance
-optimalLocations
-## make a 1 row data.frame to append to my output file.
-outDf <- data.frame("time" = Sys.time(),
-                    totalDistance,
-                    "optimalLocations" = paste(optimalLocations,
-                        collapse = ", "), row.names = F)
-## and write.
-write.csv(outDf, "results.csv")
 
-proc.time()-ptm
+}
+## 42457764867
+totalDistance
+##  42  449 1188  313  196  250 1046  128
+optimalLocations
+## Original Time:
+##  user  system elapsed
+## 69.50    0.00   77.19
+proc.time() - ptm
+
