@@ -105,8 +105,13 @@ while(whileCounter < (numberOptimized * numberOfSupplyNodes))
 totalDistance
 ##  42  449 1188  313  196  250 1046  128
 optimalLocations
-## Original Time:
+## Original Time: PC
 ##  user  system elapsed
 ## 69.50    0.00   77.19
+## Original Time: Mac
+##  user  system elapsed
+## 66.156   4.347  71.635
+
+
 proc.time() - ptm
 
